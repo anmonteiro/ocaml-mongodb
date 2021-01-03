@@ -1,0 +1,12 @@
+opam-version: "2.0"
+maintainer: "Antonio N. Monteiro <anmonteiro@gmail.com>"
+authors: [ "Antonio N. Monteiro <anmonteiro@gmail.com>" ]
+license: "BSD-3-clause"
+build: [
+  ["dune" "build" "-p" name "-j" jobs]
+]
+depends: [
+  "dune"
+  "angstrom"
+  "faraday"
+]

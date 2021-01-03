@@ -1,0 +1,4 @@
+(library
+ (name bson)
+ (public_name bson)
+ (libraries angstrom faraday))

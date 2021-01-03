@@ -1,0 +1,4 @@
+(library
+ (name mongo_lwt_unix)
+ (public_name mongo-lwt-unix)
+ (libraries mongo-lwt gluten-lwt-unix lwt.unix))

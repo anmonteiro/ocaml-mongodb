@@ -1,0 +1,16 @@
+(library
+ (public_name ppx_deriving_bson.runtime)
+ (name ppx_deriving_bson_runtime)
+ (synopsis "Runtime components of [@@deriving bson]")
+ (modules ppx_deriving_bson_runtime)
+ (libraries ppx_deriving.runtime result))
+
+(library
+ (public_name ppx_deriving_bson)
+ (synopsis "[@@deriving bson]")
+ (libraries ppxlib ppx_deriving.api)
+ (preprocess
+  (pps ppxlib.metaquot))
+ (ppx_runtime_libraries ppx_deriving_bson.runtime bson)
+ (modules ppx_deriving_bson)
+ (kind ppx_deriver))

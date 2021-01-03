@@ -1,0 +1,4 @@
+(library
+ (name mongo_lwt)
+ (public_name mongo-lwt)
+ (libraries mongo bson lwt pbkdf base64 gluten-lwt))
