@@ -255,20 +255,20 @@ let delete_one t selector = delete t ~all:false ~selector
 
 let delete_many t selector = delete t ~all:true ~selector
 
-let find ?skip ?limit ?filter ?sort ?selector t ~response_handler =
+let find ?skip ?limit ?filter ?sort ?projection t ~response_handler =
   let bson =
     Bson.empty
     |> Bson.add_element "find" (Bson.create_string t.config.collection)
     |> maybe_add_bson ~name:"filter" filter
     |> maybe_add_bson ~name:"sort" sort
-    |> maybe_add_bson ~name:"projection" selector
+    |> maybe_add_bson ~name:"projection" projection
     |> maybe_add_int ~name:"skip" skip
     |> maybe_add_int ~name:"limit" limit
   in
   message t ~doc:bson ~response_handler
 
-let find_one ?skip ?filter ?selector t ~response_handler =
-  find t ~response_handler ?skip ~limit:1 ?filter ?selector
+let find_one ?skip ?filter ?projection t ~response_handler =
+  find t ~response_handler ?skip ~limit:1 ?filter ?projection
 
 let find_and_modify
     ?bypass_document_validation
@@ -277,7 +277,7 @@ let find_and_modify
     ?remove
     ?update
     ?new_
-    ?selector
+    ?projection
     ?upsert
     t
     ~response_handler
@@ -290,7 +290,7 @@ let find_and_modify
     |> maybe_add_bool ~name:"remove" remove
     |> maybe_add_bson ~name:"update" update
     |> maybe_add_bool ~name:"new" new_
-    |> maybe_add_bson ~name:"fields" selector
+    |> maybe_add_bson ~name:"fields" projection
     |> maybe_add_bool ~name:"upsert" upsert
     |> maybe_add_bool
          ~name:"bypassDocumentValidation"

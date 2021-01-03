@@ -102,7 +102,7 @@ module type Client = sig
     :  ?skip:int
     -> ?limit:int
     -> ?filter:Bson.t
-    -> ?selector:Bson.t
+    -> ?projection:Bson.t
     -> ?sort:Bson.t
     -> t
     -> (Bson.t, 'a list) Lwt_result.t
@@ -112,11 +112,23 @@ module type Client = sig
   val find_one
     :  ?skip:int
     -> ?filter:Bson.t
-    -> ?selector:Bson.t
+    -> ?projection:Bson.t
     -> t
     -> (Bson.t, 'a list) Lwt_result.t
   (** find {b the first} document in the db and collection. May raise
       Mongo_failed exception.*)
+
+  val find_and_modify
+    :  ?bypass_document_validation:bool
+    -> ?query:Bson.t
+    -> ?sort:Bson.t
+    -> ?remove:bool
+    -> ?update:Bson.t
+    -> ?new_:bool
+    -> ?projection:Bson.t
+    -> ?upsert:bool
+    -> t
+    -> (Bson.t, 'a list) Lwt_result.t
 
   val count
     :  ?skip:int

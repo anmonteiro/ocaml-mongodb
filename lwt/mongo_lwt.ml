@@ -61,11 +61,35 @@ module Client (Client_runtime : Gluten_lwt.Client) = struct
   let delete_many t selector =
     wrap t ~f:(fun t -> Connection.delete_many t selector)
 
-  let find ?skip ?limit ?filter ?selector ?sort t =
-    wrap t ~f:(Connection.find ?skip ?limit ?filter ?selector ?sort)
+  let find ?skip ?limit ?filter ?projection ?sort t =
+    wrap t ~f:(Connection.find ?skip ?limit ?filter ?projection ?sort)
 
-  let find_one ?skip ?filter ?selector t =
-    wrap t ~f:(Connection.find_one ?skip ?filter ?selector)
+  let find_one ?skip ?filter ?projection t =
+    wrap t ~f:(Connection.find_one ?skip ?filter ?projection)
+
+  let find_and_modify
+      ?bypass_document_validation
+      ?query
+      ?sort
+      ?remove
+      ?update
+      ?new_
+      ?projection
+      ?upsert
+      t
+    =
+    wrap
+      t
+      ~f:
+        (Connection.find_and_modify
+           ?bypass_document_validation
+           ?query
+           ?sort
+           ?remove
+           ?update
+           ?new_
+           ?projection
+           ?upsert)
 
   let count ?skip ?limit ?query t =
     wrap t ~f:(Connection.count ?skip ?limit ?query)

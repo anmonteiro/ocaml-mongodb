@@ -177,7 +177,7 @@ module Connection : sig
     -> ?limit:int
     -> ?filter:Bson.t
     -> ?sort:Bson.t
-    -> ?selector:Bson.t
+    -> ?projection:Bson.t
     -> t
     -> response_handler:(Bson.t, 'a list) response_handler
     -> unit
@@ -187,7 +187,7 @@ module Connection : sig
   val find_one
     :  ?skip:int
     -> ?filter:Bson.t
-    -> ?selector:Bson.t
+    -> ?projection:Bson.t
     -> t
     -> response_handler:(Bson.t, 'a list) response_handler
     -> unit
@@ -201,7 +201,7 @@ module Connection : sig
     -> ?remove:bool
     -> ?update:Bson.t
     -> ?new_:bool
-    -> ?selector:Bson.t
+    -> ?projection:Bson.t
     -> ?upsert:bool
     -> t
     -> response_handler:(Bson.t, 'a list) response_handler
