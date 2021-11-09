@@ -1,6 +1,21 @@
 (executable
+ (libraries mongo-lwt tls.lwt bson pbkdf)
+ (modules auth)
+ (name auth))
+
+(executable
  (libraries mongo-lwt-unix)
  (preprocess
   (pps ppx_deriving_bson))
  (modules simple)
  (name simple))
+
+(executable
+ (name pp)
+ (modules pp)
+ (libraries ppx_deriving_bson ppxlib))
+
+(executable
+ (libraries mongo-lwt-unix ppx_deriving_bson.runtime)
+ (modules foo)
+ (name foo))

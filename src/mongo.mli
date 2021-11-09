@@ -51,6 +51,15 @@ module Response : sig
   val pp_hum : Format.formatter -> t -> unit
 end
 
+module Projection : sig
+  type t =
+    { include_ : string list
+    ; exclude : string list
+    }
+
+  val to_bson : t -> Bson.t
+end
+
 module Connection : sig
   type t
 

@@ -5,10 +5,7 @@ module type Client = sig
 
   type runtime
 
-  type t =
-    { connection : Connection.t
-    ; runtime : runtime
-    }
+  type t
 
   val create_connection
     :  config:Config.t
