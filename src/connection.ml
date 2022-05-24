@@ -314,7 +314,7 @@ let count ?skip ?limit ?query t ~response_handler =
   in
   message t ~doc:bson ~response_handler
 
-let get_more t ?limit ?max_time_ms ~cursor ~response_handler =
+let get_more t ?limit ?max_time_ms ~response_handler cursor =
   let bson =
     Bson.empty
     |> Bson.add_element "getMore" (Bson.create_int64 cursor)

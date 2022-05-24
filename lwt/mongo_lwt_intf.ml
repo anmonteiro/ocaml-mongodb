@@ -144,7 +144,7 @@ module type Client = sig
     :  t
     -> ?limit:int
     -> ?max_time_ms:int
-    -> cursor:int64
+    -> int64
     -> (Bson.t, 'a list) Lwt_result.t
   (** get {b all / the default number} of documents via a cursor_id. e.g.
       get_more_of_num m cursor_id num. May raise Mongo_failed exception.*)

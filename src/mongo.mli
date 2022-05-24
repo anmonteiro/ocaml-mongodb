@@ -222,8 +222,8 @@ module Connection : sig
     :  t
     -> ?limit:int
     -> ?max_time_ms:int
-    -> cursor:int64
     -> response_handler:(Bson.t, 'a list) response_handler
+    -> int64
     -> unit
   (** get {b all / the default number} of documents via a cursor_id. e.g.
       get_more_of_num m cursor_id num. May raise Mongo_failed exception.*)

@@ -94,8 +94,8 @@ module Client (Client_runtime : Gluten_lwt.Client) = struct
   let count ?skip ?limit ?query t =
     wrap t ~f:(Connection.count ?skip ?limit ?query)
 
-  let get_more t ?limit ?max_time_ms ~cursor =
-    wrap t ~f:(Connection.get_more ?limit ?max_time_ms ~cursor)
+  let get_more t ?limit ?max_time_ms cursor =
+    wrap t ~f:(fun t -> Connection.get_more t ?limit ?max_time_ms cursor)
 
   let kill_cursors t cursors =
     wrap t ~f:(fun t -> Connection.kill_cursors t cursors)
