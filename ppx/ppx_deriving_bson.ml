@@ -643,7 +643,7 @@ let ser_str_of_type ~options ~path ({ ptype_loc = loc; _ } as type_decl) =
       ]
     , [ Str.value
           Nonrecursive
-          [ Vb.mk [%expr [%e pvar "_"]] [%expr [%e evar var_s]] ]
+          [ Vb.mk [%pat? [%p pvar "_"]] [%expr [%e evar var_s]] ]
       ] )
 
 let ser_str_of_type_ext
@@ -975,7 +975,7 @@ let desu_str_of_type ~options ~path ({ ptype_loc = loc; _ } as type_decl) =
       ]
     , [ Str.value
           Nonrecursive
-          [ Vb.mk [%expr [%e pvar "_"]] [%expr [%e evar var_s]] ]
+          [ Vb.mk [%pat? [%p pvar "_"]] [%expr [%e evar var_s]] ]
       ]
       @
       if not want_exn then
@@ -983,10 +983,10 @@ let desu_str_of_type ~options ~path ({ ptype_loc = loc; _ } as type_decl) =
       else
         [ Str.value
             Nonrecursive
-            [ Vb.mk [%expr [%e pvar var_s_exn]] var_s_exn_fun ]
+            [ Vb.mk [%pat? [%p pvar var_s_exn]] var_s_exn_fun ]
         ; Str.value
             Nonrecursive
-            [ Vb.mk [%expr [%e pvar "_"]] [%expr [%e evar var_s_exn]] ]
+            [ Vb.mk [%pat? [%p pvar "_"]] [%expr [%e evar var_s_exn]] ]
         ] )
 
 let desu_str_of_type_ext
@@ -1193,10 +1193,10 @@ let bson_str_fields ~options ~path:_ type_decl =
              (Mod.structure
                 [ Str.value
                     Nonrecursive
-                    [ Vb.mk [%expr [%e pvar "keys"]] [%expr [%e flist]] ]
+                    [ Vb.mk [%pat? [%p pvar "keys"]] [%expr [%e flist]] ]
                 ; Str.value
                     Nonrecursive
-                    [ Vb.mk [%expr [%e pvar "_"]] [%expr [%e evar "keys"]] ]
+                    [ Vb.mk [%pat? [%p pvar "_"]] [%expr [%e evar "keys"]] ]
                 ]))
       ]
     | _ ->
