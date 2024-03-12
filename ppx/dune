@@ -3,7 +3,7 @@
  (name ppx_deriving_bson_runtime)
  (synopsis "Runtime components of [@@deriving bson]")
  (modules ppx_deriving_bson_runtime)
- (libraries ppx_deriving.runtime result))
+ (libraries ppx_deriving.runtime))
 
 (library
  (public_name ppx_deriving_bson)

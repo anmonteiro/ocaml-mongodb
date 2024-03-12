@@ -264,7 +264,7 @@ let rec desu_fold ~loc ~path f typs =
        (fun x (i, y) ->
          let loc = x.pexp_loc in
          [%expr [%e y] >>= fun [%p pvar (argn i)] -> [%e x]])
-       [%expr Result.Ok [%e f (List.mapi (fun i _ -> evar (argn i)) typs)]]
+       [%expr Ok [%e f (List.mapi (fun i _ -> evar (argn i)) typs)]]
 
 and desu_expr_of_typ ~path typ =
   match attr_desu typ.ptyp_attributes with
@@ -275,7 +275,7 @@ and desu_expr_of_typ ~path typ =
 
 and desu_expr_of_only_typ ~path typ =
   let loc = typ.ptyp_loc in
-  let error = [%expr Result.Error [%e str (String.concat "." path)]] in
+  let error = [%expr Error [%e str (String.concat "." path)]] in
   let decode' cases =
     Exp.function_
       (List.map (fun (pat, exp) -> Exp.case pat exp) cases
@@ -284,44 +284,44 @@ and desu_expr_of_only_typ ~path typ =
   let decode pat exp = decode' [ pat, exp ] in
   match typ with
   | [%type: unit] ->
-    decode [%pat? `Null] [%expr Result.Ok ()]
+    decode [%pat? `Null] [%expr Ok ()]
   | [%type: int] ->
-    decode [%pat? `Int64 x] [%expr Result.Ok x]
+    decode [%pat? `Int64 x] [%expr Ok x]
   | [%type: float] ->
     decode'
-      [ [%pat? `Int32 x], [%expr Result.Ok (Int32.to_float x)]
-      ; [%pat? `Int64 x], [%expr Result.Ok (Int64.to_float x)]
-      ; [%pat? `Double x], [%expr Result.Ok x]
+      [ [%pat? `Int32 x], [%expr Ok (Int32.to_float x)]
+      ; [%pat? `Int64 x], [%expr Ok (Int64.to_float x)]
+      ; [%pat? `Double x], [%expr Ok x]
       ]
   | [%type: bool] ->
-    decode [%pat? `Bool x] [%expr Result.Ok x]
+    decode [%pat? `Bool x] [%expr Ok x]
   | [%type: string] ->
-    decode [%pat? `String x] [%expr Result.Ok x]
+    decode [%pat? `String x] [%expr Ok x]
   | [%type: bytes] ->
-    decode [%pat? `Binary (Generic x)] [%expr Result.Ok (Bytes.of_string x)]
+    decode [%pat? `Binary (Generic x)] [%expr Ok (Bytes.of_string x)]
   | [%type: char] ->
     decode
       [%pat? `String x]
-      [%expr if String.length x = 1 then Result.Ok x.[0] else [%e error]]
+      [%expr if String.length x = 1 then Ok x.[0] else [%e error]]
   | [%type: int32] | [%type: Int32.t] ->
-    decode' [ [%pat? `Int32 x], [%expr Result.Ok x] ]
+    decode' [ [%pat? `Int32 x], [%expr Ok x] ]
   | [%type: int64] | [%type: Int64.t] ->
     (match attr_int_encoding typ.ptyp_attributes with
     | `String ->
-      decode [%pat? `String x] [%expr Result.Ok (Int64.of_string x)]
+      decode [%pat? `String x] [%expr Ok (Int64.of_string x)]
     | _ ->
       decode'
-        [ [%pat? `Int64 x], [%expr Result.Ok x]
-        ; [%pat? `Int32 x], [%expr Result.Ok (Int64.of_int32 x)]
+        [ [%pat? `Int64 x], [%expr Ok x]
+        ; [%pat? `Int32 x], [%expr Ok (Int64.of_int32 x)]
         ])
   | [%type: nativeint] | [%type: Nativeint.t] ->
     (match attr_int_encoding typ.ptyp_attributes with
     | `String ->
-      decode [%pat? `String x] [%expr Result.Ok (Nativeint.of_string x)]
+      decode [%pat? `String x] [%expr Ok (Nativeint.of_string x)]
     | _ ->
       decode'
-        [ [%pat? `Int64 x], [%expr Result.Ok (Int64.to_nativeint x)]
-        ; [%pat? `Int32 x], [%expr Result.Ok (Nativeint.of_int32 x)]
+        [ [%pat? `Int64 x], [%expr Ok (Int64.to_nativeint x)]
+        ; [%pat? `Int32 x], [%expr Ok (Nativeint.of_int32 x)]
         ])
   | [%type: [%t? typ] ref] ->
     [%expr
@@ -330,9 +330,9 @@ and desu_expr_of_only_typ ~path typ =
     [%expr
       function
       | `Null ->
-        Result.Ok None
+        Ok None
       | x ->
-        [%e desu_expr_of_typ ~path typ] x >>= fun x -> Result.Ok (Some x)]
+        [%e desu_expr_of_typ ~path typ] x >>= fun x -> Ok (Some x)]
   | [%type: [%t? typ] list] ->
     decode
       [%pat? `Array xs]
@@ -342,7 +342,7 @@ and desu_expr_of_only_typ ~path typ =
       [%pat? `Array xs]
       [%expr map_bind [%e desu_expr_of_typ ~path typ] [] xs >|= Array.of_list]
   | [%type: Bson.t] ->
-    [%expr fun x -> Result.Ok x]
+    [%expr fun x -> Ok x]
   | { ptyp_desc = Ptyp_tuple typs; _ } ->
     decode
       [%pat? `Array [%p plist (List.mapi (fun i _ -> pvar (argn i)) typs)]]
@@ -363,7 +363,7 @@ and desu_expr_of_only_typ ~path typ =
                let attrs = field.prf_attributes in
                Exp.case
                  [%pat? `Array [ `String [%p pstr (attr_name label attrs)] ]]
-                 [%expr Result.Ok [%e Exp.variant label None]]
+                 [%expr Ok [%e Exp.variant label None]]
              | Rtag (label, false, [ { ptyp_desc = Ptyp_tuple typs; _ } ]) ->
                let label = label.txt in
                let attrs = field.prf_attributes in
@@ -384,7 +384,7 @@ and desu_expr_of_only_typ ~path typ =
                  [%pat? `Array [ `String [%p pstr (attr_name label attrs)]; x ]]
                  [%expr
                    [%e desu_expr_of_typ ~path typ] x >>= fun x ->
-                   Result.Ok [%e Exp.variant label (Some [%expr x])]]
+                   Ok [%e Exp.variant label (Some [%expr x])]]
              | Rinherit ({ ptyp_desc = Ptyp_constr (tname, _); _ } as typ) ->
                Exp.case
                  [%pat? [%p Pat.type_ tname] as x]
@@ -404,9 +404,9 @@ and desu_expr_of_only_typ ~path typ =
            (fun expr typ ->
              [%expr
                match [%e desu_expr_of_typ ~path typ] json with
-               | Result.Ok result ->
-                 Result.Ok (result :> [%t toplevel_typ])
-               | Result.Error _ ->
+               | Ok result ->
+                 Ok (result :> [%t toplevel_typ])
+               | Error _ ->
                  [%e expr]])
            error
       |> Exp.case [%pat? _]
@@ -757,7 +757,7 @@ let desu_str_of_record ~loc ~is_strict ~error ~path wrap_record labels =
                   mknoloc (Lident name), evar (argn i)))
            None
        in
-       [%expr Result.Ok [%e wrap_record r]])
+       [%expr Ok [%e wrap_record r]])
       (labels |> List.mapi (fun i _ -> i))
   in
   let default_case = if is_strict then top_error else [%expr loop xs _state] in
@@ -797,7 +797,7 @@ let desu_str_of_record ~loc ~is_strict ~error ~path wrap_record labels =
            | None ->
              error (path @ [ name ])
            | Some x ->
-             [%expr Result.Ok [%e x]])
+             [%expr Ok [%e x]])
   in
   [%expr
     function
@@ -815,7 +815,7 @@ let desu_str_of_record ~loc ~is_strict ~error ~path wrap_record labels =
 let desu_str_of_type ~options ~path ({ ptype_loc = loc; _ } as type_decl) =
   let { is_strict; want_exn; _ } = parse_options options in
   let path = path @ [ type_decl.ptype_name.txt ] in
-  let error path = [%expr Result.Error [%e str (String.concat "." path)]] in
+  let error path = [%expr Error [%e str (String.concat "." path)]] in
   let top_error = error path in
   let polymorphize = Ppx_deriving.poly_fun_of_type_decl type_decl in
   let typ = Ppx_deriving.core_type_of_type_decl type_decl in
@@ -958,9 +958,9 @@ let desu_str_of_type ~options ~path ({ ptype_loc = loc; _ } as type_decl) =
           wrap_runtime
             [%expr
               match [%e app (evar var_s) var_s_exn_args] with
-              | Result.Ok x ->
+              | Ok x ->
                 x
-              | Result.Error err ->
+              | Error err ->
                 raise (Failure err)]
         | hd :: tl ->
           lam (pvar hd) (loop tl)
