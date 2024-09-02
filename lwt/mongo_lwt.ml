@@ -258,7 +258,7 @@ module Client (Client_runtime : Gluten_lwt.Client) = struct
           "SCRAM-SHA-1", 20
         | `SHA256 ->
           "SCRAM-SHA-256", 32
-        | #Mirage_crypto.Hash.hash ->
+        | #Digestif.hash' ->
           failwith "Not supported"
       in
       let bson =
@@ -285,10 +285,10 @@ module Client (Client_runtime : Gluten_lwt.Client) = struct
           |> Digest.to_hex
         | `SHA256 ->
           password
-        | #Mirage_crypto.Hash.hash ->
+        | #Digestif.hash' ->
           failwith "Not supported"
       in
-      let salt = Base64.decode_exn salt |> Cstruct.of_string in
+      let salt = Base64.decode_exn salt in
       let salted_password =
         Auth.hi password_digest salt iterations mode (Int32.of_int dk_len)
       in

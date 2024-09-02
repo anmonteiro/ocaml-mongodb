@@ -24,20 +24,16 @@ let hi data salt iterations mode dk_len =
   Pbkdf.pbkdf2
     ~prf:mode
     ~salt
-    ~password:(Cstruct.of_string data)
+    ~password:data
     ~count:iterations
     ~dk_len
 
 let hmac key text =
-  Cstruct.of_string text
-  |> Mirage_crypto.Hash.SHA1.hmac ~key
-  |> Cstruct.to_string
+  Digestif.SHA1.hmac_string ~key text |> Digestif.SHA1.to_raw_string
 
 let h mode text =
-  let module H = (val Mirage_crypto.Hash.module_of mode) in
-  Cstruct.of_string text |> H.digest
+  let (module H) = Digestif.module_of_hash' mode in
+  H.digest_string text |> H.to_raw_string
 
 let xor a b =
-  Mirage_crypto.Uncommon.Cs.xor (Cstruct.of_string a) (Cstruct.of_string b)
-  |> Cstruct.to_string
-  |> Base64.encode_exn
+  Mirage_crypto.Uncommon.xor a b |> Base64.encode_exn
