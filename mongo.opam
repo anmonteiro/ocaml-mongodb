@@ -10,3 +10,4 @@ depends: [
   "bson"
 ]
 
+x-maintenance-intent: [ "(latest)" ]

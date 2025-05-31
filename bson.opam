@@ -10,3 +10,4 @@ depends: [
   "angstrom"
   "faraday"
 ]
+x-maintenance-intent: [ "(latest)" ]

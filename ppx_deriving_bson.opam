@@ -10,3 +10,4 @@ depends: [
   "ppxlib"
   "ppx_deriving"
 ]
+x-maintenance-intent: [ "(latest)" ]

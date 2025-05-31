@@ -10,3 +10,4 @@ depends: [
  "gluten-lwt-unix"
  "lwt.unix"
 ]
+x-maintenance-intent: [ "(latest)" ]
