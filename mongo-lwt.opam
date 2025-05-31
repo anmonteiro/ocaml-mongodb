@@ -14,3 +14,4 @@ depends: [
   "gluten-lwt"
   "mirage-crypto"
 ]
+x-maintenance-intent: [ "(latest)" ]
